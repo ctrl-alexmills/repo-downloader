@@ -7,9 +7,11 @@ Paste a GitHub (or any Git) repo URL, choose a folder, click Download.
 - Next time (same URL + folder): it pulls the latest changes instead
 - Remembers the last folder you used
 
-Requirements: Python 3 and Git installed (nothing else to install).
-Run with:  python repo_downloader.py
+Requirements: Git installed (https://git-scm.com).
+Run from source with:  python repo_downloader.py
 """
+
+__version__ = "1.0.0"
 
 import json
 import os
@@ -18,6 +20,7 @@ import subprocess
 import sys
 import threading
 import tkinter as tk
+import webbrowser
 from pathlib import Path
 from tkinter import filedialog, messagebox, scrolledtext
 
@@ -25,6 +28,12 @@ SETTINGS_FILE = Path.home() / ".repo_downloader.json"
 
 # Stop a black console window flashing up on Windows when git runs
 NO_WINDOW = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
+
+# Never let git wait for typed input - there's no console to type into.
+# Sign-in still works through Git Credential Manager's own pop-up window.
+GIT_ENV = {**os.environ, "GIT_TERMINAL_PROMPT": "0"}
+
+GIT_DOWNLOAD_URL = "https://git-scm.com/downloads"
 
 
 # ---------------------------------------------------------------- settings
@@ -59,6 +68,9 @@ def run_git(args, cwd=None, log=print):
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
+        encoding="utf-8",
+        errors="replace",
+        env=GIT_ENV,
         creationflags=NO_WINDOW,
     )
     for line in process.stdout:
@@ -72,7 +84,7 @@ def download_repo(url, folder, log):
     """Clone the repo into folder/<name>, or pull if it's already there."""
     if not shutil.which("git"):
         log("ERROR: Git isn't installed (or isn't on PATH).")
-        log("Install it from https://git-scm.com and try again.")
+        log(f"Install it from {GIT_DOWNLOAD_URL} and try again.")
         return False
 
     name = repo_name_from_url(url)
@@ -105,7 +117,7 @@ def download_repo(url, folder, log):
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Repo Downloader")
+        self.title(f"Repo Downloader {__version__}")
         self.geometry("620x380")
         self.minsize(480, 300)
         self.settings = load_settings()
@@ -147,6 +159,18 @@ class App(tk.Tk):
         self.columnconfigure(1, weight=1)
         self.rowconfigure(3, weight=1)
         self.bind("<Return>", lambda e: self.start_download())
+        self.after(200, self.check_git)
+
+    def check_git(self):
+        if shutil.which("git"):
+            return
+        if messagebox.askyesno(
+            "Repo Downloader",
+            "Git isn't installed, and Repo Downloader needs it to download repos.\n\n"
+            "Open the Git download page now?\n"
+            "(After installing Git, restart Repo Downloader.)",
+        ):
+            webbrowser.open(GIT_DOWNLOAD_URL)
 
     def choose_folder(self):
         folder = filedialog.askdirectory(
@@ -207,5 +231,18 @@ class App(tk.Tk):
             )
 
 
+def enable_sharp_text():
+    """Stop Windows drawing the window blurry on high-DPI (scaled) screens."""
+    if sys.platform != "win32":
+        return
+    try:
+        import ctypes
+
+        ctypes.windll.shcore.SetProcessDpiAwareness(1)
+    except Exception:
+        pass
+
+
 if __name__ == "__main__":
+    enable_sharp_text()
     App().mainloop()

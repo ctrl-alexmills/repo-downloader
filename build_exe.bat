@@ -15,8 +15,15 @@ if not exist "%SCRIPT%" (
     goto error
 )
 
-set PY=python
-where python >nul 2>&1 || set PY=py
+REM Find a Python that actually runs ("where python" can find the
+REM Microsoft Store placeholder, which isn't a real Python)
+set PY=
+py -c "import sys" >nul 2>&1 && set PY=py
+if not defined PY python -c "import sys" >nul 2>&1 && set PY=python
+if not defined PY (
+    echo Could not find a working Python.
+    goto error
+)
 
 echo.
 echo [1/2] Installing the packaging tool (PyInstaller)...
