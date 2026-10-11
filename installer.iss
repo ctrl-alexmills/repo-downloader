@@ -11,7 +11,7 @@
 
 #define MyAppName "Repo Downloader"
 #define MyAppExeName "Repo Downloader.exe"
-#define MyAppURL "https://github.com/ctrl-alexmills/Github-POC"
+#define MyAppURL "https://github.com/ctrl-alexmills/repo-downloader"
 
 [Setup]
 ; Never change AppId - Windows uses it to recognise upgrades and uninstalls

@@ -12,7 +12,7 @@ Works with any Git URL (GitHub, GitLab, Bitbucket and others), including private
 ## Install
 
 1. **Install [Git](https://git-scm.com/downloads)** if you don't already have it. Repo Downloader uses it behind the scenes, and the default options in Git's installer are fine.
-2. Go to the **[latest release](https://github.com/ctrl-alexmills/Github-POC/releases/latest)** and download **`RepoDownloader-Setup-<version>.exe`**.
+2. Go to the **[latest release](https://github.com/ctrl-alexmills/repo-downloader/releases/latest)** and download **`RepoDownloader-Setup-<version>.exe`**.
 3. Run it. It installs just for your Windows account, so it doesn't need admin rights, and it adds Repo Downloader to your Start Menu.
 
 Prefer not to install anything? Download `RepoDownloader-<version>-portable.exe` instead and run it from anywhere.
@@ -21,7 +21,7 @@ Prefer not to install anything? Download `RepoDownloader-<version>-portable.exe`
 
 The app isn't code-signed, which costs money, so Windows SmartScreen shows a warning the first time you run it.
 Click **More info → Run anyway**. Every release is built from the source code in this repo by
-[GitHub Actions](https://github.com/ctrl-alexmills/Github-POC/actions), so you can check exactly what went into it.
+[GitHub Actions](https://github.com/ctrl-alexmills/repo-downloader/actions), so you can check exactly what went into it.
 
 ## Private repos
 
