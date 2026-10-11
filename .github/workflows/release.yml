@@ -53,7 +53,7 @@ jobs:
             "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $($_.Name)"
           } | Set-Content release\SHA256SUMS.txt -Encoding ascii
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: RepoDownloader-${{ steps.version.outputs.version }}
           path: release/
